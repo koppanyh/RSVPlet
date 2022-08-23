@@ -1,4 +1,4 @@
-javascript: var settings = {wpm: 400, startDelay: 2000, puncMult: 2.5, symbMult: 1.5, fontSize: "30px", color: "white", color2: "#FF4444", backgroundColor: "rgba(0, 0, 0, 0.9)", punctuation: ".,!?;", symbols: "`~@#$%^&*()-_=+[{]}\\|:'\"<>/"};
+javascript: var settings = {wpm: 400, startDelay: 2000, punctMult: 2.5, punctAdd: 0, symbMult: 1.5, symbAdd: 0, fontSize: "50px", color: "white", color2: "#FF4444", backgroundColor: "rgba(0, 0, 0, 0.9)", punctuation: ".,!?;", symbols: "0123456789`~@#$%^&*()-_=+[{]}\\|:'\"<>/"};
 /* TODO get selection working within PDFs and box of https://developer.mozilla.org/en-US/docs/Web/CSS/vertical-align */
 var sel = window.getSelection? window.getSelection() : document.getSelection? document.getSelection() : document.selection.createRange().text;
 var words = (sel + '').replace(/\n/g, '  ').split(' ').reverse();
@@ -10,12 +10,12 @@ function includeAny(word, chars) {
 }
 var charDelay = 60000 / (settings.wpm * 5);
 function calcDelay(word) {
-    var delay = word.length * charDelay;
+    var delay = Math.max(word.length, 5) * charDelay;
     if (includeAny(word, settings.punctuation))
-        delay *= settings.puncMult;
+        delay = (delay * settings.punctMult) + settings.punctAdd;
     else if (includeAny(word, settings.symbols))
-        delay *= settings.symbMult;
-    return Math.max(delay, charDelay * 5);
+        delay = (delay * settings.symbMult) + settings.symbAdd;
+    return delay;
 }
 var rsvpDiv;
 /* TODO get it to pause somehow and go away if you need to */
@@ -48,17 +48,17 @@ function printWord(word) {
     rsvpDiv.innerHTML = `${first}<span style="color: ${settings.color2}">${second}</span>${third}`;
 }
 /* TODO if the word is the same as the last one, blink it */
-function spreed() {
+function rsvp() {
     if (!words.length) {
         rsvpDiv.remove();
         return;
     }
     var word = words.pop();
     printWord(word);
-    setTimeout(spreed, calcDelay(word));
+    setTimeout(rsvp, calcDelay(word));
 }
 setupDiv();
 printWord(words.pop());
-setTimeout(spreed, settings.startDelay);
+setTimeout(rsvp, settings.startDelay);
 /* TODO add estimated reading time */
 /* TODO add progress bar */
