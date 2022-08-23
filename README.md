@@ -1,5 +1,6 @@
 # RSVPlet
-An RSVP reader completely contained in a bookmarklet!
+
+An RSVP reader contained entirely within a bookmarklet!
 
 ## How to use
 
@@ -16,10 +17,11 @@ bar, but GitHub doesn't allow embedding JavaScript links into markup files.
 
 ### Usage
 
-Highlight whatever text you want to read and click the bookmarklet.
+- Highlight whatever text you want to read
+- Click the bookmarklet
 
 If you want to change the speed or colors or anything, simply edit the
-`settings` dictionary at the beginning of the bookmarklet's URL.
+`settings` dictionary near the beginning of the bookmarklet's URL.
 
 ## What is this?
 
@@ -49,3 +51,6 @@ too fond of how it looked or the extra steps to use it.
 
 I decided to make my own RSVP reader, inspired by the beauty of Stutter and the
 bookmarklet concept of AccelaReader. So here it is.
+
+... Also I was bored on the bus going home one day, so writing the first version
+was a nice little distraction for the 2 hour journey.
