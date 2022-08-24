@@ -8,7 +8,7 @@ javascript: (function() {
         symbMult: 1.5,
         symbAdd: 0,
         enableTime: true,
-        enableProgress: false,
+        enableProgress: true,
         textFontSize: "50px",
         timeFontSize: "10px",
         progressSize: "10px",
