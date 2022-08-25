@@ -203,7 +203,7 @@ javascript: (function() {
                         if (e.data.selectedText) {
                             new RSVP(e.data.selectedText).start();
                         } else noTextErr();
-                    } else noTextErr();
+                    }
                 });
                 window.hasRsvpMessageHandler = true;
             }
