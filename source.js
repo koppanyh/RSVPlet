@@ -184,20 +184,39 @@ javascript: (function() {
             this.#teardown();
         }
     };
+    function noTextErr() {
+        new RSVP("NO_SELECTION_FOUND_ERR").start();
+    }
     let selection = (
         window.getSelection ? window.getSelection() :
         document.getSelection ? document.getSelection() :
         document.selection.createRange().text
     ) + '';
-    let rsvp = new RSVP(selection);
-    rsvp.start();
+    if (selection) {
+        new RSVP(selection).start();
+    } else {
+        let embed = document.querySelector("embed");
+        if (embed && embed.type && embed.type.includes("pdf")) {
+            if (!window.hasRsvpMessageHandler) {
+                window.addEventListener("message", e => {
+                    if (e.data && e.data.type == "getSelectedTextReply") {
+                        if (e.data.selectedText) {
+                            new RSVP(e.data.selectedText).start();
+                        } else noTextErr();
+                    } else noTextErr();
+                });
+                window.hasRsvpMessageHandler = true;
+            }
+            embed.postMessage({type: "getSelectedText"}, '*');
+        } else noTextErr();
+    }
 })();
 /*
- * TODO get selection working within PDFs and Google Docs and code boxes of https://developer.mozilla.org/en-US/docs/Web/CSS/vertical-align
+ * TODO get selection working within Google Docs
  */
 /*
  * RSVPlet by @koppanyh, 2022.
  * Contributors: Frost Sheridan
  * https://github.com/koppanyh/RSVPlet
- * Version 5
+ * Version 6
 */

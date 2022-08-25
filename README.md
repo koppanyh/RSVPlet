@@ -50,6 +50,12 @@ If you want to change the speed or colors or anything, simply edit the
  - punctuation <Str> - List of punctuation characters for delay calculation
  - symbols <Str> - List of symbol characters for delay calculation
 
+#### Limitations
+
+limitations:
+- Cannot read text from iframes
+- Only tested only in Google Chrome
+
 ## What is this?
 
 [RSVP](https://en.wikipedia.org/wiki/Rapid_serial_visual_presentation) is a
