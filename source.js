@@ -1,21 +1,22 @@
 javascript: (function() {
     const settings = {
         wpm: 400,
-        startDelay: 2000,
-        endDelay: 1000,
+        startDelay: 1000,
+        endDelay: 500,
         punctMult: 2.5,
         punctAdd: 0,
         symbMult: 1.5,
         symbAdd: 0,
+        enableStatus: true,
         enableTime: true,
         enableProgress: true,
         textFontSize: "50px",
-        timeFontSize: "10px",
+        statusFontSize: "10px",
         progressSize: "10px",
         textColor: "white",
         textColor2: "#FF4444",
-        timeColor: "grey",
-        backgroundColor: "rgba(0, 0, 0, 0.9)",
+        statusColor: "grey",
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
         modalColor: "rgba(0, 0, 0, 0.5)",
         progressColor: "rgba(255, 255, 0, 0.15)",
         punctuation: ".,!?;:",
@@ -29,12 +30,23 @@ javascript: (function() {
     }
     let RSVP = class {
         constructor(text) {
-            let splitted = text.trim().replace(/\n/g, '  ').split(' ');
+            let list = text.trim().replace(/\n/g, '  ').split(' ').reverse();
+            let splitted = [];
+            while (list.length > 0) {
+                if (list[list.length - 1] == splitted[splitted.length - 1])
+                    splitted.push('');
+                splitted.push(list.pop());
+            }
             this.words = splitted.map(x => { return {text: x}; });
-            this.#calcDelay();
             this.index = 0;
             this.timeout = null;
+            this.totalTime = 0;
             this.spentTime = 0;
+            this.modalDiv = null;
+            this.rsvpDiv = null;
+            this.progDiv = null;
+            this.statusDisp = null;
+            this.#calcDelay();
         }
         #calcDelay() {
             this.totalTime = 0;
@@ -80,11 +92,11 @@ javascript: (function() {
             modalDiv.onclick = () => { this.stop(); };
             this.modalDiv = modalDiv;
             let rsvpDiv = document.createElement("div");
-            rsvpDiv.style = `position: fixed; top: 40%; left: 10%; width: 80%;
-                padding: 0.5em; border-radius: 0 0 10px 10px; text-align: center;
+            rsvpDiv.style = `position: fixed; top: 40%; text-align: center;
+                padding: 0.5em 0 0.5em 0; border-radius: 0 0 10px 10px;
                 font-weight: bold; font-size: ${settings.textFontSize};
-                font-family: monospace; color: ${settings.textColor};
-                background-color: ${settings.backgroundColor};`;
+                font-family: monospace; color: ${settings.textColor}; left: 10%;
+                background-color: ${settings.backgroundColor}; width: 80%;`;
             rsvpDiv.onclick = (evt) => {
                 evt.stopPropagation();
                 this.playPause();
@@ -99,12 +111,20 @@ javascript: (function() {
                 modalDiv.appendChild(progDiv);
                 this.progDiv = progDiv;
             }
+            if (settings.enableStatus) {
+                let statusDisp = document.createElement("span");
+                statusDisp.style = `position: fixed; top: 40%; left: 10%;
+                    padding-left: 10px; font-size: ${settings.statusFontSize};
+                    font-family: monospace; color: ${settings.statusColor};`;
+                modalDiv.appendChild(statusDisp);
+                this.statusDisp = statusDisp;
+            }
             if (settings.enableTime) {
                 let timeDisp = document.createElement("span");
                 timeDisp.style = `position: fixed; top: 40%; left: 10%;
                     width: 80%; text-align: center;
-                    font-size: ${settings.timeFontSize};
-                    font-family: monospace; color: ${settings.timeColor}`;
+                    font-size: ${settings.statusFontSize};
+                    font-family: monospace; color: ${settings.statusColor};`;
                 timeDisp.innerHTML = this.totalTime < 60000 ?
                     `${Math.floor(this.totalTime / 100) / 10 + 1} seconds` :
                     `${Math.floor(this.totalTime / 6000) / 10 + 1} minutes`;
@@ -126,21 +146,37 @@ javascript: (function() {
             let third = word.substr(middle + 1);
             this.rsvpDiv.innerHTML = `${first}<span style="color: ${settings.textColor2}">${second}</span>${third}`;
         }
+        #updateStatus(msg) {
+            if (settings.enableStatus)
+                this.statusDisp.innerHTML = msg;
+        }
         playPause() {
             if (this.timeout !== null) {
+                this.#updateStatus("Paused");
+                this.rsvpDiv.style.transition = "opacity 200ms linear";
+                this.rsvpDiv.style.opacity = 0.5;
                 clearInterval(this.timeout);
                 this.timeout = null;
             } else {
-                this.timeout = setTimeout(() => { this.#run(); },
-                    settings.startDelay);
+                this.#updateStatus("Resuming");
+                this.rsvpDiv.style.transition =
+                    `opacity ${settings.startDelay}ms linear`;
+                this.rsvpDiv.style.opacity = 1;
+                this.timeout = setTimeout(() => {
+                    this.#updateStatus("");
+                    this.#run();
+                }, settings.startDelay);
             }
         }
         start() {
             this.#setup();
             let next = this.#next();
-            this.timeout = setTimeout(() => { this.#run(); },
-                settings.startDelay);
+            this.timeout = setTimeout(() => {
+                this.#updateStatus("");
+                this.#run();
+            }, settings.startDelay);
             this.#updateProgress(next.delay);
+            this.#updateStatus("Starting");
             this.#print(next.text);
         }
         stop() {
@@ -157,11 +193,11 @@ javascript: (function() {
     rsvp.start();
 })();
 /*
-TODO get selection working within PDFs and Google Docs and code boxes of https://developer.mozilla.org/en-US/docs/Web/CSS/vertical-align
-TODO if the word is the same as the last one, blink it
-*/
+ * TODO get selection working within PDFs and Google Docs and code boxes of https://developer.mozilla.org/en-US/docs/Web/CSS/vertical-align
+ */
 /*
-RSVPlet by @koppanyh, 2022.
-https://github.com/koppanyh/RSVPlet
-Version 4
+ * RSVPlet by @koppanyh, 2022.
+ * Contributors: Frost Sheridan
+ * https://github.com/koppanyh/RSVPlet
+ * Version 5
 */
