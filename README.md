@@ -2,6 +2,8 @@
 
 An RSVP reader contained entirely within a bookmarklet!
 
+Also the first to be able to read PDFs!
+
 ## How to use
 
 ### Installation
@@ -52,7 +54,6 @@ If you want to change the speed or colors or anything, simply edit the
 
 #### Limitations
 
-limitations:
 - Cannot read text from iframes
 - Only tested only in Google Chrome
 
@@ -86,4 +87,5 @@ I decided to make my own RSVP reader, inspired by the beauty of Stutter and the
 bookmarklet concept of AccelaReader. So here it is.
 
 ... Also I was bored on the bus going home one day, so writing the first version
-was a nice little distraction for the 2 hour journey.
+was a nice little distraction for the 2 hour journey. Actually, most of the code
+for this was done over multiple bus rides...
