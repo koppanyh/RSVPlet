@@ -197,16 +197,15 @@ javascript: (function() {
     } else {
         let embed = document.querySelector("embed");
         if (embed && embed.type && embed.type.includes("pdf")) {
-            if (!window.hasRsvpMessageHandler) {
-                window.addEventListener("message", e => {
-                    if (e.data && e.data.type == "getSelectedTextReply") {
-                        if (e.data.selectedText) {
-                            new RSVP(e.data.selectedText).start();
-                        } else noTextErr();
-                    }
-                });
-                window.hasRsvpMessageHandler = true;
-            }
+            let handler = e => {
+                if (e.data && e.data.type == "getSelectedTextReply") {
+                    window.removeEventListener("message", handler);
+                    if (e.data.selectedText) {
+                        new RSVP(e.data.selectedText).start();
+                    } else noTextErr();
+                }
+            };
+            window.addEventListener("message", handler);
             embed.postMessage({type: "getSelectedText"}, '*');
         } else noTextErr();
     }
@@ -218,5 +217,5 @@ javascript: (function() {
  * RSVPlet by @koppanyh, 2022.
  * Contributors: Frost Sheridan
  * https://github.com/koppanyh/RSVPlet
- * Version 6
+ * Version 7
 */
