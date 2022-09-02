@@ -30,7 +30,7 @@ javascript: (function() {
     }
     let RSVP = class {
         constructor(text) {
-            let list = text.trim().replace(/\n/g, '  ').split(' ').reverse();
+            let list = text.trim().replace(/\n/g, '  ').replace(/\u00a0/g, ' ').split(' ').reverse();
             let splitted = [];
             while (list.length > 0) {
                 if (list[list.length - 1] == splitted[splitted.length - 1])
@@ -217,5 +217,5 @@ javascript: (function() {
  * RSVPlet by @koppanyh, 2022.
  * Contributors: Frost Sheridan
  * https://github.com/koppanyh/RSVPlet
- * Version 7
+ * Version 8
 */
