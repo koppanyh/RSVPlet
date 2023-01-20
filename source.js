@@ -47,6 +47,8 @@ javascript: (function() {
             this.progDiv = null;
             this.statusDisp = null;
             this.#calcDelay();
+            this.escapeHTMLPolicy = trustedTypes ? trustedTypes.createPolicy("forceInner", {
+                createHTML: (to_escape) => to_escape }) : { createHTML: (to_escape) => to_escape };
         }
         #calcDelay() {
             this.totalTime = 0;
@@ -125,9 +127,9 @@ javascript: (function() {
                     width: 80%; text-align: center;
                     font-size: ${settings.statusFontSize};
                     font-family: monospace; color: ${settings.statusColor};`;
-                timeDisp.innerHTML = this.totalTime < 60000 ?
+                timeDisp.innerHTML = this.escapeHTMLPolicy.createHTML( this.totalTime < 60000 ?
                     `${Math.floor(this.totalTime / 100) / 10 + 1} seconds` :
-                    `${Math.floor(this.totalTime / 6000) / 10 + 1} minutes`;
+                    `${Math.floor(this.totalTime / 6000) / 10 + 1} minutes` );
                 modalDiv.appendChild(timeDisp);
             }
             document.body.appendChild(modalDiv);
@@ -137,18 +139,19 @@ javascript: (function() {
         }
         #print(word) {
             if (word.trim() === '') {
-                this.rsvpDiv.innerHTML = "&nbsp;";
+                this.rsvpDiv.innerHTML = this.escapeHTMLPolicy.createHTML( "&nbsp;" );
                 return;
             }
             let middle = Math.floor(word.length / 2);
             let first = word.substr(0, middle);
             let second = word.substr(middle, 1);
             let third = word.substr(middle + 1);
-            this.rsvpDiv.innerHTML = `${first}<span style="color: ${settings.textColor2}">${second}</span>${third}`;
+            this.rsvpDiv.innerHTML = this.escapeHTMLPolicy.createHTML(
+                `${first}<span style="color: ${settings.textColor2}">${second}</span>${third}` );
         }
         #updateStatus(msg) {
             if (settings.enableStatus)
-                this.statusDisp.innerHTML = msg;
+                this.statusDisp.innerHTML = this.escapeHTMLPolicy.createHTML( msg );
         }
         playPause() {
             if (this.timeout !== null) {
@@ -217,5 +220,5 @@ javascript: (function() {
  * RSVPlet by @koppanyh, 2022.
  * Contributors: Frost Sheridan
  * https://github.com/koppanyh/RSVPlet
- * Version 8
+ * Version 9
 */
