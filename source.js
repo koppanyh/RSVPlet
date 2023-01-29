@@ -47,8 +47,10 @@ javascript: (function() {
             this.progDiv = null;
             this.statusDisp = null;
             this.#calcDelay();
-            this.escapeHTMLPolicy = trustedTypes ? trustedTypes.createPolicy("forceInner", {
-                createHTML: (to_escape) => to_escape }) : { createHTML: (to_escape) => to_escape };
+            this.escapeHTMLPolicy = typeof trustedTypes !== "undefined"
+                ? trustedTypes.createPolicy("forceInner", { createHTML: (to_escape) => to_escape })
+                : { createHTML: (to_escape) => to_escape };
+            this.handleKeypressHandler = null;
         }
         #calcDelay() {
             this.totalTime = 0;
@@ -133,8 +135,11 @@ javascript: (function() {
                 modalDiv.appendChild(timeDisp);
             }
             document.body.appendChild(modalDiv);
+            this.handleKeypressHandler = this.#handleKeypress.bind(this);
+            document.body.addEventListener("keydown", this.handleKeypressHandler, true);
         }
         #teardown() {
+            document.body.removeEventListener("keydown", this.handleKeypressHandler, true);
             this.modalDiv.remove();
         }
         #print(word) {
@@ -142,7 +147,7 @@ javascript: (function() {
                 this.rsvpDiv.innerHTML = this.escapeHTMLPolicy.createHTML( "&nbsp;" );
                 return;
             }
-            let middle = Math.floor(word.length / 2);
+            let middle = Math.floor((word.length % 2 === 0 ? word.length - 1 : word.length) / 2);
             let first = word.substr(0, middle);
             let second = word.substr(middle, 1);
             let third = word.substr(middle + 1);
@@ -152,6 +157,12 @@ javascript: (function() {
         #updateStatus(msg) {
             if (settings.enableStatus)
                 this.statusDisp.innerHTML = this.escapeHTMLPolicy.createHTML( msg );
+        }
+        #handleKeypress(evt) {
+            evt.preventDefault();
+            evt.stopImmediatePropagation();
+            if (evt.code === "Space" || evt.keyCode === 32) this.playPause();
+            else if (evt.code == "Escape" || evt.keyCode === 27) this.stop();
         }
         playPause() {
             if (this.timeout !== null) {
@@ -217,8 +228,8 @@ javascript: (function() {
  * TODO get selection working within Google Docs
  */
 /*
- * RSVPlet by @koppanyh, 2022.
+ * RSVPlet by @koppanyh, 2023.
  * Contributors: Frost Sheridan
  * https://github.com/koppanyh/RSVPlet
- * Version 9
+ * Version 10
 */
