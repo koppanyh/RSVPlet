@@ -54,7 +54,8 @@ If you want to change the speed or colors or anything, simply edit the
 
 #### Limitations
 
-- Cannot read text from iframes
+- Cannot read text from iframes or Google Doc
+- PDF support is spotty
 - Mostly tested only in Google Chrome. Firefox may work but is not guaranteed
 
 ## What is this?
