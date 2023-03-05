@@ -21,8 +21,8 @@ bar, but GitHub doesn't allow embedding JavaScript links into markup files.
 
 - Highlight whatever text you want to read
 - Click the bookmarklet
-- Click the rectangle to pause/play the reader
-- Click outside of the rectangle to exit early
+- Click the rectangle (or press space on the keyboard) to pause/play the reader
+- Click outside of the rectangle (or press escape on the keyboard) to exit early
 
 If you want to change the speed or colors or anything, simply edit the
 `settings` dictionary near the beginning of the bookmarklet's URL
@@ -55,7 +55,7 @@ If you want to change the speed or colors or anything, simply edit the
 #### Limitations
 
 - Cannot read text from iframes
-- Only tested only in Google Chrome
+- Mostly tested only in Google Chrome. Firefox may work but is not guaranteed
 
 ## What is this?
 
