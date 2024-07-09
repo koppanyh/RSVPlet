@@ -1,6 +1,6 @@
 javascript: (function() {
     const settings = {
-        wpm: 400,
+        wpm: 500,
         startDelay: 1000,
         endDelay: 500,
         punctMult: 2.5,
@@ -20,7 +20,8 @@ javascript: (function() {
         modalColor: "rgba(0, 0, 0, 0.5)",
         progressColor: "rgba(255, 255, 0, 0.15)",
         punctuation: ".,!?;:",
-        symbols: "0123456789`~@#$%^&*()-_=+[{]}\\|'\"<>/"
+        symbols: "0123456789`~@#$%^&*()-_=+[{]}\\|'\"<>/",
+        enableClipboard: true
     };
     function includeAny(word, chars) {
         for (let i = 0; i < chars.length; i++)
@@ -201,14 +202,23 @@ javascript: (function() {
     function noTextErr() {
         new RSVP("NO_SELECTION_FOUND_ERR").start();
     }
-    let selection = (
-        window.getSelection ? window.getSelection() :
-        document.getSelection ? document.getSelection() :
-        document.selection.createRange().text
-    ) + '';
-    if (selection) {
-        new RSVP(selection).start();
-    } else {
+    function readFromClipboard() {
+        if (settings.enableClipboard) {
+            navigator.clipboard.readText()
+                .then(t => {
+                    if (t) new RSVP(t).start();
+                    else noTextErr();
+                }).catch(e => {
+                    console.error(e);
+                    if (e instanceof DOMException) {
+                        new RSVP("CLIPBOARD_NOT_ENABLED_ERR").start();
+                    } else {
+                        new RSVP(e).start();
+                    }
+                });
+        } else noTextErr();
+    }
+    function readFromPdf() {
         let embed = document.querySelector("embed");
         if (embed && embed.type && embed.type.includes("pdf")) {
             let handler = e => {
@@ -216,20 +226,27 @@ javascript: (function() {
                     window.removeEventListener("message", handler);
                     if (e.data.selectedText) {
                         new RSVP(e.data.selectedText).start();
-                    } else noTextErr();
+                    } else readFromClipboard();
                 }
             };
             window.addEventListener("message", handler);
             embed.postMessage({type: "getSelectedText"}, '*');
-        } else noTextErr();
+        } else readFromClipboard();
     }
+    let selection = (
+        window.getSelection ? window.getSelection() :
+        document.getSelection ? document.getSelection() :
+        document.selection.createRange().text
+    ) + '';
+    if (selection) new RSVP(selection).start();
+    else readFromPdf();
 })();
 /*
  * TODO get selection working within Google Docs
  */
 /*
- * RSVPlet by @koppanyh, 2023.
+ * RSVPlet by @koppanyh, 2024.
  * Contributors: Frost Sheridan
  * https://github.com/koppanyh/RSVPlet
- * Version 10
+ * Version 11
 */

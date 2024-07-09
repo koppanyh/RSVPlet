@@ -24,6 +24,9 @@ bar, but GitHub doesn't allow embedding JavaScript links into markup files.
 - Click the rectangle (or press space on the keyboard) to pause/play the reader
 - Click outside of the rectangle (or press escape on the keyboard) to exit early
 
+If text cannot be read (e.g. from within an iframe), copy the text and try
+again, it will attempt to read from the clipboard.
+
 If you want to change the speed or colors or anything, simply edit the
 `settings` dictionary near the beginning of the bookmarklet's URL
 (documented below).
@@ -51,6 +54,7 @@ If you want to change the speed or colors or anything, simply edit the
  - progressColor <Str> - Color of the progress bar
  - punctuation <Str> - List of punctuation characters for delay calculation
  - symbols <Str> - List of symbol characters for delay calculation
+ - enableClipboard <Bool> - Defines if clipboard should be read if no selection found
 
 #### Limitations
 
