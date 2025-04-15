@@ -249,5 +249,5 @@ javascript: (function() {
  * RSVPlet by @koppanyh, 2024.
  * Contributors: Frost Sheridan
  * https://github.com/koppanyh/RSVPlet
- * Version 11
+ * Version 12
 */
